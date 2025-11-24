@@ -38,7 +38,7 @@ services:
       - ANNOUNCEMENT_EN
       - ANNOUNCEMENT_RU
     expose:
-      - 8080
+      - 4396
     networks:
       - postgres-network
     labels:
