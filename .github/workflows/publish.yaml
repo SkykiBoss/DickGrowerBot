@@ -35,7 +35,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: two2024/${{ env.IMAGE_NAME }}
           tags: |
             # output 0.1.2
             type=semver,pattern={{version}}
