@@ -1,4 +1,4 @@
-name: Publish to GitHub Registry
+name: Publish Docker image
 on:
   push:
     branches:
@@ -6,9 +6,11 @@ on:
     tags:
       - 'v*'
   workflow_dispatch:
+
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: dickgrowerbot
+  IMAGE_NAME: ${{ github.repository }}
+
 jobs:
   Publish-image:
     runs-on: ubuntu-latest
@@ -16,51 +18,45 @@ jobs:
       contents: read
       packages: write
     steps:
-      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
-      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
-      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+      # 1️⃣ 输出触发信息
+      - run: echo "🎉 Workflow triggered by ${{ github.event_name }}"
 
-      - name: Check out repository code
-        uses: actions/checkout@v3
-      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
+      # 2️⃣ Checkout 仓库
+      - uses: actions/checkout@v3
 
-      - name: Log in to the Container registry
-        uses: docker/login-action@v2
+      # 3️⃣ 登录 GitHub Container Registry
+      - uses: docker/login-action@v2
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
+      # 4️⃣ 生成 metadata（tags/labels）
+      - id: meta
         uses: docker/metadata-action@v4
         with:
-          images: two2024/dickgrowerbot
+          images: two2024/${{ env.IMAGE_NAME }}
           tags: |
-            # output 0.1.2
             type=semver,pattern={{version}}
-            # output 0.1
             type=semver,pattern={{major}}.{{minor}}
-            # disabled if major zero
             type=semver,pattern={{major}},enable=${{ !startsWith(github.ref, 'refs/tags/v0.') }}
 
+      # 5️⃣ 设置 fallback tag（如果 metadata tag 为空）
+      - name: Set fallback tag if metadata tag is empty
+        run: |
+          if [ -z "${{ steps.meta.outputs.tags }}" ]; then
+            echo "TAGS=two2024/${{ env.IMAGE_NAME }}:latest" >> $GITHUB_ENV
+          else
+            echo "TAGS=${{ steps.meta.outputs.tags }}" >> $GITHUB_ENV
+          fi
+
+      # 6️⃣ Build & Push Docker 镜像
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
           context: .
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: ${{ env.TAGS }}
           labels: ${{ steps.meta.outputs.labels }}
 
-      - run: echo "🍏 This job's status is ${{ job.status }}."
-
-  Create-release:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v3
-      - uses: ncipollo/release-action@v1
-        with:
-          generateReleaseNotes: true
-          token: ${{ secrets.GITHUB_TOKEN }}
+      - run: echo "🍏 Docker image pushed successfully: ${{ env.TAGS }}"
