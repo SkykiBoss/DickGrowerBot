@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_NAME: dickgrowerbot
 jobs:
   Publish-image:
     runs-on: ubuntu-latest
@@ -35,7 +35,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: two2024/${{ env.IMAGE_NAME }}
+          images: two2024/dickgrowerbot
           tags: |
             # output 0.1.2
             type=semver,pattern={{version}}
