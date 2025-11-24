@@ -35,7 +35,7 @@ jobs:
       - id: meta
         uses: docker/metadata-action@v4
         with:
-          images: two2024/${{ env.IMAGE_NAME }}
+          images: two2024/dickgrowerbot
           tags: |
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
@@ -59,4 +59,4 @@ jobs:
           tags: ${{ env.TAGS }}
           labels: ${{ steps.meta.outputs.labels }}
 
-      - run: echo "🍏 Docker image pushed successfully: ${{ env.TAGS }}"
+        run: echo "🍏 Docker image pushed successfully: ${{ env.TAGS }}"
