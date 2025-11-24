@@ -33,7 +33,7 @@ COPY --from=builder /etc/group /etc/group
 # Use the unprivileged user
 USER appuser:appuser
 
-EXPOSE 8080
+EXPOSE 4396
 ARG TELOXIDE_TOKEN
 ARG RUST_LOG
 ARG WEBHOOK_URL
