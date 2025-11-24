@@ -45,7 +45,7 @@ jobs:
       - name: Set fallback tag if metadata tag is empty
         run: |
           if [ -z "${{ steps.meta.outputs.tags }}" ]; then
-            echo "TAGS=two2024/${{ env.IMAGE_NAME }}:latest" >> $GITHUB_ENV
+            echo "TAGS=two2024/dickgrowerbot:latest" >> $GITHUB_ENV
           else
             echo "TAGS=${{ steps.meta.outputs.tags }}" >> $GITHUB_ENV
           fi
@@ -59,4 +59,4 @@ jobs:
           tags: ${{ env.TAGS }}
           labels: ${{ steps.meta.outputs.labels }}
 
-        run: echo "🍏 Docker image pushed successfully: ${{ env.TAGS }}"
+        run: echo "🍏 Docker image pushed successfully"
