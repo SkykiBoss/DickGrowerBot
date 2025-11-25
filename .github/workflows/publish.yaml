@@ -38,8 +38,8 @@ jobs:
           context: .
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}:${{ steps.tags.outputs.tag }}
-          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}:latest
+            two2024/dickgrowerbot:${{ steps.tags.outputs.tag }}
+          cache-from: type=registry,ref=two2024/dickgrowerbot:latest
           cache-to: type=inline
 
   Create-release:
